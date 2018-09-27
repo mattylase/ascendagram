@@ -13,26 +13,29 @@ class CameraScreenState extends State<CameraScreen> {
   void initState() {
     super.initState();
 
-    availableCameras().then(
-            (cameras) =>
-            setState(() {_controller = CameraController(cameras[0], ResolutionPreset.medium);})
-    );
+    availableCameras().then( (cameras) => _initializeCameraController(cameras[0]) );
+  }
+
+  void _initializeCameraController(CameraDescription camDesc) {
+    _controller = CameraController(camDesc, ResolutionPreset.medium);
+    _controller.initialize().then((_) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {});
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_controller.value == null) {
+    if (_controller?.value == null) {
       return Container(
         decoration: BoxDecoration(color: Colors.white),
-        child: Center(child: Text('Getting camera information...')),
+        child: Center(child: Text('Getting camera info!', style: Theme.of(context).textTheme.title,)),
       );
     } else {
       return Container(
-        decoration: BoxDecoration(color: Colors.green),
-        child: AspectRatio(
-        aspectRatio: _controller.value.aspectRatio,
-    child: new CameraPreview(_controller),
-        )
+        child: Center(child: CameraPreview(_controller))
       );
     }
   }
