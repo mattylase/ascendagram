@@ -14,9 +14,11 @@ class HomeScreenState extends State<HomeScreen> {
   Client httpClient;
   List<dynamic> users;
   List<dynamic> photos;
+  List<bool> liked;
 
   HomeScreenState() {
     httpClient = Client();
+    liked = List.filled(25, false);
   }
 
   @override
@@ -38,39 +40,48 @@ class HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(icon: Icon(Icons.camera), onPressed: () => Navigator.of(context).pushNamed('/camera')),
+        leading: IconButton(
+            icon: Icon(Icons.camera_alt),
+            onPressed: () => Navigator.of(context).pushNamed('/camera')),
         title: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Image.asset('assets/ascendagram.png',
               width: 100.0, fit: BoxFit.cover),
         ),
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Icon(Icons.send),
+          )
+        ],
         titleSpacing: 0.0,
       ),
       body: getScreenBody(),
       bottomNavigationBar: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Icon(Icons.home, size: 40.0, color: Colors.black),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Icon(Icons.search, size: 40.0, color: Colors.black),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Icon(Icons.add, size: 40.0, color: Colors.black),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Icon(Icons.child_care, size: 40.0, color: Colors.black),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Icon(Icons.person, size: 40.0, color: Colors.black),
-        ),
-      ],),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Icon(Icons.home, size: 40.0, color: Colors.black),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Icon(Icons.search, size: 40.0, color: Colors.black),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Icon(Icons.add, size: 40.0, color: Colors.black),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Icon(Icons.child_care, size: 40.0, color: Colors.black),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Icon(Icons.person, size: 40.0, color: Colors.black),
+          ),
+        ],
+      ),
     );
   }
 
@@ -81,12 +92,7 @@ class HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: ListView.builder(
               itemCount: 25,
-              itemBuilder: (context, index) => ListItem(
-                    username:
-                        '${users[index]['name']['title']} ${users[index]['name']['first']} ${users[index]['name']['last']} ',
-                    profilePicUrl: users[index]['picture']['large'],
-                photoUrl: photos[index]['url'],
-                  ),
+              itemBuilder: buildListItem,
             ),
           )
         ],
@@ -98,5 +104,22 @@ class HomeScreenState extends State<HomeScreen> {
         ],
       );
     }
+  }
+
+  ListItem buildListItem(BuildContext context, int index) {
+    var userName = '${users[index]['name']['title']} ${users[index]['name']['first']} ${users[index]['name']['last']}';
+    var profilePicUrl = users[index]['picture']['large'];
+    var postPicUrl = photos[index]['url'];
+
+    return ListItem(
+      liked[index],
+      username: userName,
+      profilePicUrl: profilePicUrl,
+      photoUrl: postPicUrl,
+      onLiked: () {
+        liked[index] = !liked[index];
+        setState(() {});
+      }
+    );
   }
 }

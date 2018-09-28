@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
 
-class ListItem extends StatefulWidget {
+typedef OnLiked = void Function();
+
+class ListItem extends StatelessWidget {
   final String username;
   final String profilePicUrl;
   final String photoUrl;
+  final OnLiked onLiked;
+  final bool liked;
 
-  ListItem({this.username, this.profilePicUrl, this.photoUrl});
-
-  @override
-  State<StatefulWidget> createState() => ListItemState();
-
-}
-
-class ListItemState extends State<ListItem> {
-  bool liked = false;
+  ListItem(this.liked, {this.username, this.profilePicUrl, this.photoUrl, this.onLiked});
 
   @override
   Widget build(BuildContext context) {
@@ -22,27 +18,27 @@ class ListItemState extends State<ListItem> {
         Row(
           children: <Widget>[
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child:
-                  ClipOval(
-                    child: Image.network(widget.profilePicUrl, width: 40.0, height: 40.0)
-                  )
+                ClipOval(
+                    child: Image.network(profilePicUrl, width: 40.0, height: 40.0)
+                )
             ),
-            Text(widget.username)
+            Text(username)
           ],
         ),
-        GestureDetector(onDoubleTap: toggleLike, child: Image.network(widget.photoUrl)),
+        GestureDetector(onDoubleTap: onLiked, child: Image.network(photoUrl)),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Row(
               children: <Widget>[
-                liked ? IconButton(icon: Icon(Icons.brightness_high, color: Colors.red), onPressed: toggleLike): IconButton(icon: Icon(Icons.brightness_low, color: Colors.black), onPressed: toggleLike),
-                IconButton(icon: Icon(Icons.comment, color: Colors.black)),
-                IconButton(icon: Icon(Icons.send, color: Colors.black)),
+                liked ? IconButton(icon: Icon(Icons.brightness_high, color: Colors.red), onPressed: onLiked): IconButton(icon: Icon(Icons.brightness_low, color: Colors.black), onPressed: onLiked),
+                IconButton(icon: Icon(Icons.comment, color: Colors.black), onPressed: null),
+                IconButton(icon: Icon(Icons.send, color: Colors.black), onPressed: null),
               ],
             ),
-            IconButton(icon: Icon(Icons.save, color: Colors.black)),
+            IconButton(icon: Icon(Icons.save, color: Colors.black), onPressed: null),
           ],
         ),
         Padding(
@@ -57,9 +53,5 @@ class ListItemState extends State<ListItem> {
     );
   }
 
-  void toggleLike() {
-    setState(() {
-      liked = !liked;
-    });
-  }
+
 }
